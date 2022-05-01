@@ -179,7 +179,7 @@ setupAL TEXTEQU <mov al,count>
 setupAL		; generates: "mov al,10"
 ```
 
-64 位的 MASM 不允许出现一些伪指令，如：INVOKE, ADDR, .model, .386, .stack 等。
+64 位的 MASM 不允许出现一些伪指令，如：INVOKE, ADDR, .model, .386, .stack 等，见下面的 AddTwoSum_64.asm：
 
 ```assembly
 ; AddTwoSum_64.asm - Chapter 3 example
@@ -306,3 +306,6 @@ L1:	add ax,cx
 ```
 
 逻辑为 `ecx` 自减到 0 之前都会进行 `jmp` 操作。 
+
+### 条件语句
+
