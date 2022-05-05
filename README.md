@@ -309,3 +309,98 @@ L1:	add ax,cx
 
 ### 条件语句
 
+## Part 3 写一个 Windows 命令行窗口程序
+
+### Handle
+
+一个 handle 是一个 uint32 变量，以下的常数是预定义的 handle 请求：
+
+- STD_INPUT_HANDLE
+- STD_OUTPUT_HANDLE
+- STD_ERROR_HANDLE
+
+`GetStdHandle` 操作返回一个 handle 到 `eax` 内。例子如下：
+
+```assembly
+GetStdHandle PROTO,
+	nStdHandle:DWORD ; handle type
+...
+
+INVOKE GetStdHandle, STD_OUTPUT_HANDLE
+mov myHandle, eax
+```
+
+下面的 `ReadConsole` 操作能够读入输入并且存入。PROTO 如下：
+
+```assembly
+ReadConsole PROTO,
+	handle:DWORD,
+	pBuffer:PTR BYTE,
+	maxBytes:DWORD,
+	pBytesRead:PTR DWORD,
+	notUsed:DWORD
+```
+
+考虑以下的例子：
+
+```assembly
+TITLE Console1.asm
+
+mainc1 PROC
+	INVOKE GetStdHandle, STD_OUTPUT_HANDLE
+	mov consoleHandle, eax
+	mov ebx, messageSize
+	
+	INVOKE WriteConsole,
+		consoleHandle,
+		ADDR message,
+		ebx,
+		ADDR bytesWritten,
+		0
+		
+	INVOKE ExitProcess, 0
+mainc1 ENDP
+```
+
+`SetConsoleTitle` 能够改变 Window 的标题，`GetConsoleScreenBufferInfo` 操作能够返回关于 Console 窗口的 Buffer 信息。类似地，我们使用 `SetConsoleWindowInfo` 操作可以改变窗口的信息。
+
+接下来的操作涉及控制游标。
+
+`GetConsoleCursorInfo` 操作返回游标的大小和是否可见。类似地，`SetConsoleCursorInfo` 和 `SetConsoleCursorPosition` 可以设置游标的信息和位置。
+
+`SetConsoleTextAttribute` 可以设置窗口的背景色和文本颜色。
+
+### 一个有颜色的程序
+
+```assembly
+TITLE Writing Text Colors (WriteColors.asm)
+INCLUDE Irvine32.inc
+.data
+         outHandle    HANDLE ?
+         cellsWritten DWORD ?
+         xyPos        COORD <30,3>
+    ; Array of character codes:
+         buffer       BYTE "Have a iridescent day!"
+         BufSize      DWORD ($-buffer)
+    ; Array of attributes:
+         attributes   WORD 0Fh,0Eh,0Dh,0Ch,0Bh,0Ah,9,8,7,6
+         WORD         5,4,3,2,1,2,3,4,5,6,7,8
+.code
+main PROC
+    ; Get the Console standard output handle:
+         INVOKE GetStdHandle,STD_OUTPUT_HANDLE
+         mov    outHandle,eax
+    ; Set the colors of adjacent cells:
+         INVOKE WriteConsoleOutputAttribute,
+outHandle, ADDR attributes,
+BufSize, xyPos, ADDR cellsWritten
+    ; Write character codes 1 through 20:
+         INVOKE WriteConsoleOutputCharacter,
+outHandle, ADDR buffer, BufSize,
+xyPos, ADDR cellsWritten
+         INVOKE ExitProcess,0
+    ; end program
+main ENDP
+END main
+```
+

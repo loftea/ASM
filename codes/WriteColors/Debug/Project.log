@@ -1,3 +1,3 @@
 ﻿  Assembling WriteColor.asm...
 WriteColor.obj : warning LNK4258: 指令“/ENTRY:main@0”与开关“/ENTRY:main”不兼容；已忽略
-  Project.vcxproj -> C:\Users\Eussi_kun\Documents\GitHub\ASM\Project32_VS2022\Debug\Project.exe
+  Project.vcxproj -> C:\Users\Eussi_kun\Documents\GitHub\ASM\codes\WriteColors\Debug\Project.exe
