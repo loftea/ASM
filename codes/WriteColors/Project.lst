@@ -1,82 +1,330 @@
-Microsoft (R) Macro Assembler Version 14.31.31107.0	    05/05/22 23:40:16
-%Writing Text Colors (WriteColors.asm			     Page 1 - 1
+Microsoft (R) Macro Assembler Version 14.31.31107.0	    05/06/22 15:01:23
+ windows application (winapp.asm			     Page 1 - 1
 
 
-				TITLE Writing Text Colors (WriteColors.asm)
-				INCLUDE Irvine32.inc
-			      C ; Include file for Irvine32.lib             (Irvine32.inc)
-			      C 
-			      C ;OPTION CASEMAP:NONE		; optional: make identifiers case-sensitive
-			      C 
-			      C INCLUDE SmallWin.inc		; MS-Windows prototypes, structures, and constants
+				title windows application (winapp.asm)
+
+				.386
+				.model flat, stdcall
+				include GraphWin.inc
 			      C .NOLIST
 			      C .LIST
 			      C 
-			      C INCLUDE VirtualKeys.inc
-			      C ; VirtualKeys.inc
+				include SmallWin.inc
 			      C .NOLIST
+			      C .MODEL flat, stdcall
+c:\Irvine\SmallWin.inc(11) : warning A4011:multiple .MODEL directives found : .MODEL ignored
 			      C .LIST
 			      C 
-			      C 
-			      C .NOLIST
-			      C .LIST
-			      C 
+
+				;======== data =======
  00000000			.data
- 00000000 00000000		         outHandle    HANDLE ?
- 00000004 00000000		         cellsWritten DWORD ?
- 00000008 001E 0003		         xyPos        COORD <30,3>
-				    ; Array of character codes:
- 0000000C 48 61 76 65 20	         buffer       BYTE "Have a iridescent day!oooo"
-	   61 20 69 72 69
-	   64 65 73 63 65
-	   6E 74 20 64 61
-	   79 21 6F 6F 6F
-	   6F
- 00000026 0000001A		         BufSize      DWORD ($-buffer)
-				    ; Array of attributes:
- 0000002A 000F 000E 000D	         attributes   WORD 0Fh,0Eh,0Dh,0Ch,0Bh,0Ah,9,8,7,6
-	   000C 000B 000A
-	   0009 0008 0007
-	   0006
- 0000003E  0005 0004 0003	         WORD         5,4,3,2,1,2,3,4,5,6,7,8
-	   0002 0001 0002
-	   0003 0004 0005
-	   0006 0007 0008
+ 00000000 41 70 70 6C 69	AppLoadMsgTitle	byte "Application Loaded",0
+	   63 61 74 69 6F
+	   6E 20 4C 6F 61
+	   64 65 64 00
+ 00000013 54 68 69 73 20	AppLoadMsgText	byte "This window displays when the WM_CREATE "
+	   77 69 6E 64 6F
+	   77 20 64 69 73
+	   70 6C 61 79 73
+	   20 77 68 65 6E
+	   20 74 68 65 20
+	   57 4D 5F 43 52
+	   45 41 54 45 20
+ 0000003B  6D 65 73 73 61					byte "message is received", 0
+	   67 65 20 69 73
+	   20 72 65 63 65
+	   69 76 65 64 00
+
+ 0000004F 50 6F 70 75 70	PopupTitle	byte "Popup Window", 0
+	   20 57 69 6E 64
+	   6F 77 00
+ 0000005C 54 68 69 73 20	PopupText	byte "This window was activated by a "
+	   77 69 6E 64 6F
+	   77 20 77 61 73
+	   20 61 63 74 69
+	   76 61 74 65 64
+	   20 62 79 20 61
+	   20
+ 0000007B  57 4D 5F 4C 42				byte "WM_LBUTTONDOWN message", 0
+	   55 54 54 4F 4E
+	   44 4F 57 4E 20
+	   6D 65 73 73 61
+	   67 65 00
+
+ 00000092 4D 61 69 6E 20	GreetTitle	byte "Main Window Active", 0
+	   57 69 6E 64 6F
+	   77 20 41 63 74
+	   69 76 65 00
+ 000000A5 54 68 69 73 20	GreetText	byte "This window is shown immediately after "
+	   77 69 6E 64 6F
+	   77 20 69 73 20
+	   73 68 6F 77 6E
+	   20 69 6D 6D 65
+	   64 69 61 74 65
+	   6C 79 20 61 66
+	   74 65 72 20
+ 000000CC  43 72 65 61 74				byte "CreatedWindow and UpdateWindow are called.", 0
+	   65 64 57 69 6E
+	   64 6F 77 20 61
+	   6E 64 20 55 70
+	   64 61 74 65 57
+	   69 6E 64 6F 77
+	   20 61 72 65 20
+	   63 61 6C 6C 65
+	   64 2E 00
+
+ 000000F7 57 4D 5F 43 4C	CloseMsg	byte "WM_CLOSE msg received", 0
+	   4F 53 45 20 6D
+	   73 67 20 72 65
+	   63 65 69 76 65
+	   64 00
+
+ 0000010D 45 72 72 6F 72	ErrorTitle	byte "Error!",0
+	   21 00
+ 00000114 4D 79 20 77 69	WindowName	byte "My windows app",0
+	   6E 64 6F 77 73
+	   20 61 70 70 00
+ 00000123 41 53 4D 57 69	className	byte "ASMWin",0
+	   6E 00
+
+ 0000012A 00000000		MainWin WNDCLASS <NULL,WinProc,NULL,NULL,NULL,NULL,NULL, \
+	   000000E9 R
+	   00000000
+	   00000000
+	   00000000
+	   00000000
+	   00000000
+	   00000005
+	   00000000
+	   00000123 R
+					COLOR_WINDOW,NULL,className>
+
+ 00000152 00000000		msg		MSGStruct <>
+	   00000000
+	   00000000
+	   00000000
+	   00000000
+	   00000000
+	   00000000
+ 0000016E 00000000		winRect	RECT <>
+	   00000000
+	   00000000
+	   00000000
+ 0000017E 00000000		hMainWnd	dword ?
+ 00000182 00000000		hInstance	dword ?
+
+				;========= code =======
  00000000			.code
- 00000000			main PROC
-				    ; Get the Console standard output handle:
-				         INVOKE GetStdHandle,STD_OUTPUT_HANDLE
- 00000000  6A F5	   *	    push    -00000000Bh
- 00000002  E8 00000000 E   *	    call   GetStdHandle
- 00000007  A3 00000000 R	         mov    outHandle,eax
-				    ; Set the colors of adjacent cells:
-				         INVOKE WriteConsoleOutputAttribute,
-				outHandle, ADDR attributes,
-				BufSize, xyPos, ADDR cellsWritten
- 0000000C  68 00000004 R   *	    push   OFFSET cellsWritten
- 00000011  FF 35 00000008 R *	    push   dword  ptr xyPos
- 00000017  FF 35 00000026 R *	    push   BufSize
- 0000001D  68 0000002A R   *	    push   OFFSET attributes
- 00000022  FF 35 00000000 R *	    push   outHandle
- 00000028  E8 00000000 E   *	    call   WriteConsoleOutputAttribute
-				    ; Write character codes 1 through 20:
-				         INVOKE WriteConsoleOutputCharacter,
-				outHandle, ADDR buffer, BufSize,
-				xyPos, ADDR cellsWritten
- 0000002D  68 00000004 R   *	    push   OFFSET cellsWritten
- 00000032  FF 35 00000008 R *	    push   dword  ptr xyPos
- 00000038  FF 35 00000026 R *	    push   BufSize
- 0000003E  68 0000000C R   *	    push   OFFSET buffer
- 00000043  FF 35 00000000 R *	    push   outHandle
- 00000049  E8 00000000 E   *	    call   WriteConsoleOutputCharacterA
-				         INVOKE ExitProcess,0
- 0000004E  6A 00	   *	    push   +000000000h
- 00000050  E8 00000000 E   *	    call   ExitProcess
-				    ; end program
- 00000055			main ENDP
-				END main
-Microsoft (R) Macro Assembler Version 14.31.31107.0	    05/05/22 23:40:16
-%Writing Text Colors (WriteColors.asm			     Symbols 2 - 1
+ 00000000			WinMain proc
+
+					invoke	GetModuleHandle, NULL
+ 00000000  6A 00	   *	    push   +000000000h
+ 00000002  E8 00000000 E   *	    call   GetModuleHandleA
+ 00000007  A3 00000182 R		mov		hInstance, eax
+ 0000000C  A3 0000013A R		mov		MainWin.hInstance, eax
+
+					invoke	LoadIcon, NULL, IDI_APPLICATION
+ 00000011  68 00007F00	   *	    push   +000007F00h
+ 00000016  6A 00	   *	    push   +000000000h
+ 00000018  E8 00000000 E   *	    call   LoadIconA
+ 0000001D  A3 0000013E R		mov		MainWin.hIcon, eax
+					invoke	LoadCursor, NULL, IDC_ARROW
+ 00000022  68 00007F00	   *	    push   +000007F00h
+ 00000027  6A 00	   *	    push   +000000000h
+ 00000029  E8 00000000 E   *	    call   LoadCursorA
+ 0000002E  A3 00000142 R		mov MainWin.hCursor, eax
+
+					invoke RegisterClass, addr MainWin
+ 00000033  68 0000012A R   *	    push   OFFSET MainWin
+ 00000038  E8 00000000 E   *	    call   RegisterClassA
+					.if eax == 0
+ 0000003D  0B C0	   *	    or	eax, eax
+ 0000003F  75 0A	   *	    jne    @C0001
+ 00000041  E8 00000120				call ErrorHandler
+ 00000046  E9 00000097				jmp Exit_Program
+					.endif
+ 0000004B		   *@C0001:
+
+					invoke CreateWindowEx, 0, addr className,
+						addr WindowName, MAIN_WINDOW_STYLE,
+						CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+						CW_USEDEFAULT, NULL, NULL, hInstance, NULL
+ 0000004B  6A 00	   *	    push   +000000000h
+ 0000004D  FF 35 00000182 R *	    push   hInstance
+ 00000053  6A 00	   *	    push   +000000000h
+ 00000055  6A 00	   *	    push   +000000000h
+ 00000057  68 80000000	   *	    push   +080000000h
+ 0000005C  68 80000000	   *	    push   +080000000h
+ 00000061  68 80000000	   *	    push   +080000000h
+ 00000066  68 80000000	   *	    push   +080000000h
+ 0000006B  68 118F0000	   *	    push   +0118F0000h
+ 00000070  68 00000114 R   *	    push   OFFSET WindowName
+ 00000075  68 00000123 R   *	    push   OFFSET className
+ 0000007A  6A 00	   *	    push   +000000000h
+ 0000007C  E8 00000000 E   *	    call   CreateWindowExA
+					.if eax == 0
+ 00000081  0B C0	   *	    or	eax, eax
+ 00000083  75 07	   *	    jne    @C0003
+ 00000085  E8 000000DC				call ErrorHandler
+ 0000008A  EB 56				jmp Exit_Program
+					.endif
+ 0000008C		   *@C0003:
+
+ 0000008C  A3 0000017E R		mov hMainWnd, eax
+					invoke ShowWindow, hMainWnd, SW_SHOW
+ 00000091  6A 05	   *	    push   +000000005h
+ 00000093  FF 35 0000017E R *	    push   hMainWnd
+ 00000099  E8 00000000 E   *	    call   ShowWindow
+					invoke UpdateWindow, hMainWnd
+ 0000009E  FF 35 0000017E R *	    push   hMainWnd
+ 000000A4  E8 00000000 E   *	    call   UpdateWindow
+
+					invoke MessageBox, hMainWnd, addr GreetText,
+						addr GreetTitle, MB_OK
+ 000000A9  6A 00	   *	    push   +000000000h
+ 000000AB  68 00000092 R   *	    push   OFFSET GreetTitle
+ 000000B0  68 000000A5 R   *	    push   OFFSET GreetText
+ 000000B5  FF 35 0000017E R *	    push   hMainWnd
+ 000000BB  E8 00000000 E   *	    call   MessageBoxA
+
+ 000000C0			Message_Loop:
+					invoke GetMessage, addr msg, NULL,NULL,NULL
+ 000000C0  6A 00	   *	    push   +000000000h
+ 000000C2  6A 00	   *	    push   +000000000h
+ 000000C4  6A 00	   *	    push   +000000000h
+ 000000C6  68 00000152 R   *	    push   OFFSET msg
+ 000000CB  E8 00000000 E   *	    call   GetMessageA
+
+					.if eax == 0
+ 000000D0  0B C0	   *	    or	eax, eax
+ 000000D2  75 02	   *	    jne    @C0005
+ 000000D4  EB 0C				jmp Exit_Program
+					.endif
+ 000000D6		   *@C0005:
+
+					invoke DispatchMessage, addr msg
+ 000000D6  68 00000152 R   *	    push   OFFSET msg
+ 000000DB  E8 00000000 E   *	    call   DispatchMessageA
+ 000000E0  EB DE			jmp Message_Loop
+
+ 000000E2			Exit_Program:
+					invoke ExitProcess, 0
+ 000000E2  6A 00	   *	    push   +000000000h
+ 000000E4  E8 00000000 E   *	    call   ExitProcess
+ 000000E9			WinMain endp
+
+				;--------------------------
+ 000000E9			WinProc proc,
+					hWnd:dword, localMsg, wParam, lParam:dword
+				;
+				;
+				;---------------------------
+ 000000E9  55		   *	    push   ebp
+ 000000EA  8B EC	   *	    mov    ebp, esp
+ 000000EC  8B 45 0C			mov eax, localMsg
+
+					.if eax == WM_LBUTTONDOWN
+ 000000EF  3D 00000201	   *	    cmp    eax, WM_LBUTTONDOWN
+ 000000F4  75 18	   *	    jne    @C0007
+						invoke MessageBox, hWnd, addr PopupText,
+							addr PopupTitle, MB_OK
+ 000000F6  6A 00	   *	    push   +000000000h
+ 000000F8  68 0000004F R   *	    push   OFFSET PopupTitle
+ 000000FD  68 0000005C R   *	    push   OFFSET PopupText
+ 00000102  FF 75 08	   *	    push   dword  ptr ss:[ebp]+000000008h
+ 00000105  E8 00000000 E   *	    call   MessageBoxA
+ 0000010A  EB 56				jmp WinProcExit
+					.elseif eax == WM_CREATE
+ 0000010C  EB 54	   *	    jmp    @C0009
+ 0000010E		   *@C0007:
+ 0000010E  83 F8 01	   *	    cmp    eax, WM_CREATE
+ 00000111  75 18	   *	    jne    @C000A
+						invoke MessageBox, hWnd, addr AppLoadMsgText,
+							addr AppLoadMsgTitle, MB_OK
+ 00000113  6A 00	   *	    push   +000000000h
+ 00000115  68 00000000 R   *	    push   OFFSET AppLoadMsgTitle
+ 0000011A  68 00000013 R   *	    push   OFFSET AppLoadMsgText
+ 0000011F  FF 75 08	   *	    push   dword  ptr ss:[ebp]+000000008h
+ 00000122  E8 00000000 E   *	    call   MessageBoxA
+ 00000127  EB 39				jmp WinProcExit
+					.elseif eax == WM_CLOSE
+ 00000129  EB 37	   *	    jmp    @C000C
+ 0000012B		   *@C000A:
+ 0000012B  83 F8 10	   *	    cmp    eax, WM_CLOSE
+ 0000012E  75 1F	   *	    jne    @C000D
+						invoke MessageBox, hWnd, addr CloseMsg,
+							addr WindowName, MB_OK
+ 00000130  6A 00	   *	    push   +000000000h
+ 00000132  68 00000114 R   *	    push   OFFSET WindowName
+ 00000137  68 000000F7 R   *	    push   OFFSET CloseMsg
+ 0000013C  FF 75 08	   *	    push   dword  ptr ss:[ebp]+000000008h
+ 0000013F  E8 00000000 E   *	    call   MessageBoxA
+						invoke PostQuitMessage, 0
+ 00000144  6A 00	   *	    push   +000000000h
+ 00000146  E8 00000000 E   *	    call   PostQuitMessage
+ 0000014B  EB 15				jmp WinProcExit
+					.else
+ 0000014D  EB 13	   *	    jmp    @C000F
+ 0000014F		   *@C000D:
+						invoke DefWindowProc, hWnd, localMsg, wParam, lParam
+ 0000014F  FF 75 14	   *	    push   dword  ptr ss:[ebp]+000000014h
+ 00000152  FF 75 10	   *	    push   dword  ptr ss:[ebp]+000000010h
+ 00000155  FF 75 0C	   *	    push   dword  ptr ss:[ebp]+00000000Ch
+ 00000158  FF 75 08	   *	    push   dword  ptr ss:[ebp]+000000008h
+ 0000015B  E8 00000000 E   *	    call   DefWindowProcA
+ 00000160  EB 00				jmp WinProcExit
+					.endif
+ 00000162		   *@C000F:
+ 00000162		   *@C000C:
+ 00000162		   *@C0009:
+
+ 00000162			WinProcExit:
+					ret
+ 00000162  C9		   *	    leave  
+ 00000163  C2 0010	   *	    ret    00010h
+ 00000166			WinProc endp
+
+				;--------------------------
+ 00000166			ErrorHandler proc
+				;
+				;--------------------------
+ 00000186			.data
+ 00000186 00000000		pErrorMsg dword ?
+ 0000018A 00000000		messageID dword ?
+ 00000166			.code
+					invoke GetLastError
+ 00000166  E8 00000000 E   *	    call   GetLastError
+ 0000016B  A3 0000018A R		mov messageID, eax
+
+					invoke FormatMessage, FORMAT_MESSAGE_ALLOCATE_BUFFER+\
+						FORMAT_MESSAGE_FROM_SYSTEM,NULL,messageID,NULL,
+						addr pErrorMsg,NULL,NULL
+ 00000170  6A 00	   *	    push   +000000000h
+ 00000172  6A 00	   *	    push   +000000000h
+ 00000174  68 00000186 R   *	    push   OFFSET pErrorMsg
+ 00000179  6A 00	   *	    push   +000000000h
+ 0000017B  FF 35 0000018A R *	    push   messageID
+ 00000181  6A 00	   *	    push   +000000000h
+ 00000183  68 00001100	   *	    push   +000001100h
+ 00000188  E8 00000000 E   *	    call   FormatMessageA
+
+					invoke MessageBox, NULL,pErrorMsg,addr ErrorTitle,
+						MB_ICONERROR+MB_OK
+ 0000018D  6A 10	   *	    push   +000000010h
+ 0000018F  68 0000010D R   *	    push   OFFSET ErrorTitle
+ 00000194  FF 35 00000186 R *	    push   pErrorMsg
+ 0000019A  6A 00	   *	    push   +000000000h
+ 0000019C  E8 00000000 E   *	    call   MessageBoxA
+
+					invoke LocalFree, pErrorMsg
+ 000001A1  FF 35 00000186 R *	    push   pErrorMsg
+ 000001A7  E8 00000000 E   *	    call   LocalFree
+ 000001AC  C3				ret
+ 000001AD			ErrorHandler endp
+				end WinMain
+Microsoft (R) Macro Assembler Version 14.31.31107.0	    05/06/22 15:01:23
+ windows application (winapp.asm			     Symbols 2 - 1
 
 
 
@@ -103,14 +351,6 @@ FILETIME . . . . . . . . . . . .	 00000008
   hiDateTime . . . . . . . . . .	 00000004	 DWord
 FOCUS_EVENT_RECORD . . . . . . .	 00000004
   bSetFocus  . . . . . . . . . .	 00000000	 DWord
-FPU_ENVIRON  . . . . . . . . . .	 0000001C
-  controlWord  . . . . . . . . .	 00000000	 Word
-  statusWord . . . . . . . . . .	 00000004	 Word
-  tagWord  . . . . . . . . . . .	 00000008	 Word
-  instrPointerOffset . . . . . .	 0000000C	 DWord
-  instrPointerSelector . . . . .	 00000010	 DWord
-  operandPointerOffset . . . . .	 00000014	 DWord
-  operandPointerSelector . . . .	 00000018	 Word
 INPUT_RECORD . . . . . . . . . .	 00000014
   EventType  . . . . . . . . . .	 00000000	 Word
   Event  . . . . . . . . . . . .	 00000004	 XmmWord
@@ -145,6 +385,21 @@ MOUSE_EVENT_RECORD . . . . . . .	 00000010
   dwButtonState  . . . . . . . .	 00000004	 DWord
   dwMouseControlKeyState . . . .	 00000008	 DWord
   dwEventFlags . . . . . . . . .	 0000000C	 DWord
+MSGStruct  . . . . . . . . . . .	 0000001C
+  msgWnd . . . . . . . . . . . .	 00000000	 DWord
+  msgMessage . . . . . . . . . .	 00000004	 DWord
+  msgWparam  . . . . . . . . . .	 00000008	 DWord
+  msgLparam  . . . . . . . . . .	 0000000C	 DWord
+  msgTime  . . . . . . . . . . .	 00000010	 DWord
+  msgPt  . . . . . . . . . . . .	 00000014	 QWord
+POINT  . . . . . . . . . . . . .	 00000008
+  X  . . . . . . . . . . . . . .	 00000000	 DWord
+  Y  . . . . . . . . . . . . . .	 00000004	 DWord
+RECT . . . . . . . . . . . . . .	 00000010
+  left . . . . . . . . . . . . .	 00000000	 DWord
+  top  . . . . . . . . . . . . .	 00000004	 DWord
+  right  . . . . . . . . . . . .	 00000008	 DWord
+  bottom . . . . . . . . . . . .	 0000000C	 DWord
 SMALL_RECT . . . . . . . . . . .	 00000008
   Left . . . . . . . . . . . . .	 00000000	 Word
   Top  . . . . . . . . . . . . .	 00000002	 Word
@@ -161,6 +416,17 @@ SYSTEMTIME . . . . . . . . . . .	 00000010
   wMilliseconds  . . . . . . . .	 0000000E	 Word
 WINDOW_BUFFER_SIZE_RECORD  . . .	 00000004
   dwSize . . . . . . . . . . . .	 00000000	 DWord
+WNDCLASS . . . . . . . . . . . .	 00000028
+  style  . . . . . . . . . . . .	 00000000	 DWord
+  lpfnWndProc  . . . . . . . . .	 00000004	 DWord
+  cbClsExtra . . . . . . . . . .	 00000008	 DWord
+  cbWndExtra . . . . . . . . . .	 0000000C	 DWord
+  hInstance  . . . . . . . . . .	 00000010	 DWord
+  hIcon  . . . . . . . . . . . .	 00000014	 DWord
+  hCursor  . . . . . . . . . . .	 00000018	 DWord
+  hbrBackground  . . . . . . . .	 0000001C	 DWord
+  lpszMenuName . . . . . . . . .	 00000020	 DWord
+  lpszClassName  . . . . . . . .	 00000024	 DWord
 
 
 Segments and Groups:
@@ -168,78 +434,59 @@ Segments and Groups:
                 N a m e                 Size     Length   Align   Combine Class
 
 FLAT . . . . . . . . . . . . . .	GROUP
-STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 00000056 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000055 Para	  Public  'CODE'	
+STACK  . . . . . . . . . . . . .	32 Bit	 00001000 DWord	  Stack	  'STACK'	 
+_DATA  . . . . . . . . . . . . .	32 Bit	 0000018E DWord	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 000001AD DWord	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
 
                 N a m e                 Type     Value    Attr
 
-CloseFile  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 CloseHandle  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-Clrscr . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 CreateFileA  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-CreateOutputFile . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-Crlf . . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-Delay  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-DumpMem  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-DumpRegs . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+CreateWindowExA  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+DefWindowProcA . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+DispatchMessageA . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ErrorHandler . . . . . . . . . .	P Near	 00000166 _TEXT	Length= 00000047 Public STDCALL
 ExitProcess  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 FileTimeToDosDateTime  . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 FileTimeToSystemTime . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 FlushConsoleInputBuffer  . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 FormatMessageA . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetCommandLineA  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-GetCommandTail . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetConsoleCP . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetConsoleCursorInfo . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetConsoleMode . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetConsoleScreenBufferInfo . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-GetDateTime  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetFileTime  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetKeyState  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetLastError . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetLocalTime . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-GetMaxXY . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-GetMseconds  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetMessageA  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetModuleHandleA . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetNumberOfConsoleInputEvents  .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetProcessHeap . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetStdHandle . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetSystemTime  . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-GetTextColor . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetTickCount . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-Gotoxy . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetWindowDC  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetWindowRect  . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 HeapAlloc  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 HeapCreate . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 HeapDestroy  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 HeapFree . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 HeapSize . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-IsDigit  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+LoadCursorA  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+LoadIconA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 LocalFree  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 MessageBoxA  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-MsgBoxAsk  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-MsgBox . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-OpenInputFile  . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-ParseDecimal32 . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-ParseInteger32 . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 PeekConsoleInputA  . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-Random32 . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-RandomRange  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-Randomize  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-ReadChar . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+PostQuitMessage  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ReadConsoleA . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ReadConsoleInputA  . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-ReadDec  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ReadFile . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-ReadFloat  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-ReadFromFile . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-ReadHex  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-ReadInt  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-ReadKeyFlush . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-ReadKey  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-ReadString . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+RegisterClassA . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 SetConsoleCursorInfo . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 SetConsoleCursorPosition . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 SetConsoleMode . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -249,35 +496,23 @@ SetConsoleTitleA . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 SetConsoleWindowInfo . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 SetFilePointer . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 SetLocalTime . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-SetTextColor . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-ShowFPUStack . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ShowWindow . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Sleep  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-StrLength  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-Str_compare  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-Str_copy . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-Str_length . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-Str_trim . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-Str_ucase  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 SystemTimeToFileTime . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-WaitMsg  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-WriteBinB  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-WriteBin . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-WriteChar  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+UpdateWindow . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WinMain  . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 000000E9 Public STDCALL
+  Message_Loop . . . . . . . . .	L Near	 000000C0 _TEXT	
+  Exit_Program . . . . . . . . .	L Near	 000000E2 _TEXT	
+WinProc  . . . . . . . . . . . .	P Near	 000000E9 _TEXT	Length= 0000007D Public STDCALL
+  hWnd . . . . . . . . . . . . .	DWord	 bp + 00000008
+  localMsg . . . . . . . . . . .	DWord	 bp + 0000000C
+  wParam . . . . . . . . . . . .	DWord	 bp + 00000010
+  lParam . . . . . . . . . . . .	DWord	 bp + 00000014
+  WinProcExit  . . . . . . . . .	L Near	 00000162 _TEXT	
 WriteConsoleA  . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteConsoleOutputAttribute  . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteConsoleOutputCharacterA . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-WriteDec . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteFile  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-WriteFloat . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-WriteHexB  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-WriteHex . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-WriteInt . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-WriteStackFrameName  . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000055 Public STDCALL
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -297,13 +532,21 @@ Symbols:
 @fardata . . . . . . . . . . . .	Text   	 FLAT
 @stack . . . . . . . . . . . . .	Text   	 FLAT
 ALT_MASK . . . . . . . . . . . .	Number	 00000003h   
-BufSize  . . . . . . . . . . . .	DWord	 00000026 _DATA	
+AppLoadMsgText . . . . . . . . .	Byte	 00000013 _DATA	
+AppLoadMsgTitle  . . . . . . . .	Byte	 00000000 _DATA	
 CAPSLOCK_ON  . . . . . . . . . .	Number	 00000080h   
+COLOR_BACKGROUND . . . . . . . .	Number	 00000002h   
+COLOR_WINDOW . . . . . . . . . .	Number	 00000005h   
 CREATE_ALWAYS  . . . . . . . . .	Number	 00000002h   
 CREATE_NEW . . . . . . . . . . .	Number	 00000001h   
 CTRL_MASK  . . . . . . . . . . .	Number	 0000000Ch   
+CW_USEDEFAULT  . . . . . . . . .	Number	 -80000000h   
+CloseMsg . . . . . . . . . . . .	Byte	 000000F7 _DATA	
 CreateFile . . . . . . . . . . .	Text   	 CreateFileA
+CreateWindowEx . . . . . . . . .	Text   	 CreateWindowExA
 DO_NOT_SHARE . . . . . . . . . .	Number	 00000000h   
+DefWindowProc  . . . . . . . . .	Text   	 DefWindowProcA
+DispatchMessage  . . . . . . . .	Text   	 DispatchMessageA
 ENABLE_ECHO_INPUT  . . . . . . .	Number	 00000004h   
 ENABLE_LINE_INPUT  . . . . . . .	Number	 00000002h   
 ENABLE_MOUSE_INPUT . . . . . . .	Number	 00000010h   
@@ -312,6 +555,7 @@ ENABLE_PROCESSED_OUTPUT  . . . .	Number	 00000001h
 ENABLE_WINDOW_INPUT  . . . . . .	Number	 00000008h   
 ENABLE_WRAP_AT_EOL_OUTPUT  . . .	Number	 00000002h   
 ENHANCED_KEY . . . . . . . . . .	Number	 00000100h   
+ErrorTitle . . . . . . . . . . .	Byte	 0000010D _DATA	
 FALSE  . . . . . . . . . . . . .	Number	 00000000h   
 FILE_APPEND_DATA . . . . . . . .	Number	 00000004h   
 FILE_ATTRIBUTE_ARCHIVE . . . . .	Number	 00000020h   
@@ -346,6 +590,10 @@ GENERIC_EXECUTE  . . . . . . . .	Number	 20000000h
 GENERIC_READ . . . . . . . . . .	Number	 -80000000h   
 GENERIC_WRITE  . . . . . . . . .	Number	 40000000h   
 GetCommandLine . . . . . . . . .	Text   	 GetCommandLineA
+GetMessage . . . . . . . . . . .	Text   	 GetMessageA
+GetModuleHandle  . . . . . . . .	Text   	 GetModuleHandleA
+GreetText  . . . . . . . . . . .	Byte	 000000A5 _DATA	
+GreetTitle . . . . . . . . . . .	Byte	 00000092 _DATA	
 HANDLE . . . . . . . . . . . . .	Text   	 DWORD
 HEAP_GENERATE_EXCEPTIONS . . . .	Number	 00000004h   
 HEAP_GROWABLE  . . . . . . . . .	Number	 00000002h   
@@ -356,8 +604,10 @@ IDABORT  . . . . . . . . . . . .	Number	 00000003h
 IDCANCEL . . . . . . . . . . . .	Number	 00000002h   
 IDCLOSE  . . . . . . . . . . . .	Number	 00000008h   
 IDCONTINUE . . . . . . . . . . .	Number	 0000000Bh   
+IDC_ARROW  . . . . . . . . . . .	Number	 00007F00h   
 IDHELP . . . . . . . . . . . . .	Number	 00000009h   
 IDIGNORE . . . . . . . . . . . .	Number	 00000005h   
+IDI_APPLICATION  . . . . . . . .	Number	 00007F00h   
 IDNO . . . . . . . . . . . . . .	Number	 00000007h   
 IDOK . . . . . . . . . . . . . .	Number	 00000001h   
 IDRETRY  . . . . . . . . . . . .	Number	 00000004h   
@@ -370,6 +620,9 @@ KEY_EVENT  . . . . . . . . . . .	Number	 00000001h
 KEY_MASKS  . . . . . . . . . . .	Number	 0000001Fh   
 LEFT_ALT_PRESSED . . . . . . . .	Number	 00000002h   
 LEFT_CTRL_PRESSED  . . . . . . .	Number	 00000008h   
+LoadCursor . . . . . . . . . . .	Text   	 LoadCursorA
+LoadIcon . . . . . . . . . . . .	Text   	 LoadIconA
+MAIN_WINDOW_STYLE  . . . . . . .	Number	 118F0000h   
 MB_ABORTRETRYIGNORE  . . . . . .	Number	 00000002h   
 MB_APPLMODAL . . . . . . . . . .	Number	 00000000h   
 MB_CANCELTRYCONTINUE . . . . . .	Number	 00000006h   
@@ -396,130 +649,64 @@ MB_YESNOCANCEL . . . . . . . . .	Number	 00000003h
 MB_YESNO . . . . . . . . . . . .	Number	 00000004h   
 MENU_EVENT . . . . . . . . . . .	Number	 00000008h   
 MOUSE_EVENT  . . . . . . . . . .	Number	 00000002h   
+MainWin  . . . . . . . . . . . .	WNDCLASS  0000012A _DATA	
 MessageBox . . . . . . . . . . .	Text   	 MessageBoxA
 NULL . . . . . . . . . . . . . .	Number	 00000000h   
 NUMLOCK_ON . . . . . . . . . . .	Number	 00000020h   
 OPEN_ALWAYS  . . . . . . . . . .	Number	 00000004h   
 OPEN_EXISTING  . . . . . . . . .	Number	 00000003h   
 PeekConsoleInput . . . . . . . .	Text   	 PeekConsoleInputA
+PopupText  . . . . . . . . . . .	Byte	 0000005C _DATA	
+PopupTitle . . . . . . . . . . .	Byte	 0000004F _DATA	
 RIGHT_ALT_PRESSED  . . . . . . .	Number	 00000001h   
 RIGHT_CTRL_PRESSED . . . . . . .	Number	 00000004h   
 ReadConsoleInput . . . . . . . .	Text   	 ReadConsoleInputA
 ReadConsole  . . . . . . . . . .	Text   	 ReadConsoleA
+RegisterClass  . . . . . . . . .	Text   	 RegisterClassA
 SCROLLLOCK_ON  . . . . . . . . .	Number	 00000040h   
 SHIFT_MASK . . . . . . . . . . .	Number	 00000010h   
 SHIFT_PRESSED  . . . . . . . . .	Number	 00000010h   
 STD_ERROR_HANDLE . . . . . . . .	Number	 -0000000Ch   
 STD_INPUT_HANDLE . . . . . . . .	Number	 -0000000Ah   
 STD_OUTPUT_HANDLE  . . . . . . .	Number	 -0000000Bh   
+SW_SHOW  . . . . . . . . . . . .	Number	 00000005h   
 SetConsoleTitle  . . . . . . . .	Text   	 SetConsoleTitleA
 TAB  . . . . . . . . . . . . . .	Number	 00000009h   
 TRUE . . . . . . . . . . . . . .	Number	 00000001h   
 TRUNCATE_EXISTING  . . . . . . .	Number	 00000005h   
-VK_11  . . . . . . . . . . . . .	Number	 000000BDh   
-VK_12  . . . . . . . . . . . . .	Number	 000000BBh   
-VK_ADD . . . . . . . . . . . . .	Number	 0000006Bh   
-VK_BACK  . . . . . . . . . . . .	Number	 00000008h   
-VK_CANCEL  . . . . . . . . . . .	Number	 00000003h   
-VK_CAPITAL . . . . . . . . . . .	Number	 00000014h   
-VK_CLEAR . . . . . . . . . . . .	Number	 0000000Ch   
-VK_CONTROL . . . . . . . . . . .	Number	 00000011h   
-VK_DECIMAL . . . . . . . . . . .	Number	 0000006Eh   
-VK_DELETE  . . . . . . . . . . .	Number	 0000002Eh   
-VK_DIVIDE  . . . . . . . . . . .	Number	 0000006Fh   
-VK_DOWN  . . . . . . . . . . . .	Number	 00000028h   
-VK_END . . . . . . . . . . . . .	Number	 00000023h   
-VK_ESCAPE  . . . . . . . . . . .	Number	 0000001Bh   
-VK_EXECUTE . . . . . . . . . . .	Number	 0000002Bh   
-VK_F10 . . . . . . . . . . . . .	Number	 00000079h   
-VK_F11 . . . . . . . . . . . . .	Number	 0000007Ah   
-VK_F12 . . . . . . . . . . . . .	Number	 0000007Bh   
-VK_F13 . . . . . . . . . . . . .	Number	 0000007Ch   
-VK_F14 . . . . . . . . . . . . .	Number	 0000007Dh   
-VK_F15 . . . . . . . . . . . . .	Number	 0000007Eh   
-VK_F16 . . . . . . . . . . . . .	Number	 0000007Fh   
-VK_F17 . . . . . . . . . . . . .	Number	 00000080h   
-VK_F18 . . . . . . . . . . . . .	Number	 00000081h   
-VK_F19 . . . . . . . . . . . . .	Number	 00000082h   
-VK_F1  . . . . . . . . . . . . .	Number	 00000070h   
-VK_F20 . . . . . . . . . . . . .	Number	 00000083h   
-VK_F21 . . . . . . . . . . . . .	Number	 00000084h   
-VK_F22 . . . . . . . . . . . . .	Number	 00000085h   
-VK_F23 . . . . . . . . . . . . .	Number	 00000086h   
-VK_F24 . . . . . . . . . . . . .	Number	 00000087h   
-VK_F2  . . . . . . . . . . . . .	Number	 00000071h   
-VK_F3  . . . . . . . . . . . . .	Number	 00000072h   
-VK_F4  . . . . . . . . . . . . .	Number	 00000073h   
-VK_F5  . . . . . . . . . . . . .	Number	 00000074h   
-VK_F6  . . . . . . . . . . . . .	Number	 00000075h   
-VK_F7  . . . . . . . . . . . . .	Number	 00000076h   
-VK_F8  . . . . . . . . . . . . .	Number	 00000077h   
-VK_F9  . . . . . . . . . . . . .	Number	 00000078h   
-VK_HELP  . . . . . . . . . . . .	Number	 0000002Fh   
-VK_HOME  . . . . . . . . . . . .	Number	 00000024h   
-VK_INSERT  . . . . . . . . . . .	Number	 0000002Dh   
-VK_LBUTTON . . . . . . . . . . .	Number	 00000001h   
 VK_LCONTROL  . . . . . . . . . .	Number	 000000A2h   
-VK_LEFT  . . . . . . . . . . . .	Number	 00000025h   
 VK_LMENU . . . . . . . . . . . .	Number	 000000A4h   
 VK_LSHIFT  . . . . . . . . . . .	Number	 000000A0h   
-VK_MENU  . . . . . . . . . . . .	Number	 00000012h   
-VK_MULTIPLY  . . . . . . . . . .	Number	 0000006Ah   
-VK_NEXT  . . . . . . . . . . . .	Number	 00000022h   
 VK_NUMLOCK . . . . . . . . . . .	Number	 00000090h   
-VK_NUMPAD0 . . . . . . . . . . .	Number	 00000060h   
-VK_NUMPAD1 . . . . . . . . . . .	Number	 00000061h   
-VK_NUMPAD2 . . . . . . . . . . .	Number	 00000062h   
-VK_NUMPAD3 . . . . . . . . . . .	Number	 00000063h   
-VK_NUMPAD4 . . . . . . . . . . .	Number	 00000064h   
-VK_NUMPAD5 . . . . . . . . . . .	Number	 00000065h   
-VK_NUMPAD6 . . . . . . . . . . .	Number	 00000066h   
-VK_NUMPAD7 . . . . . . . . . . .	Number	 00000067h   
-VK_NUMPAD8 . . . . . . . . . . .	Number	 00000068h   
-VK_NUMPAD9 . . . . . . . . . . .	Number	 00000069h   
-VK_PAUSE . . . . . . . . . . . .	Number	 00000013h   
-VK_PRINT . . . . . . . . . . . .	Number	 0000002Ah   
-VK_PRIOR . . . . . . . . . . . .	Number	 00000021h   
-VK_RBUTTON . . . . . . . . . . .	Number	 00000002h   
 VK_RCONTROL  . . . . . . . . . .	Number	 000000A3h   
-VK_RETURN  . . . . . . . . . . .	Number	 0000000Dh   
-VK_RIGHT . . . . . . . . . . . .	Number	 00000027h   
 VK_RMENU . . . . . . . . . . . .	Number	 000000A5h   
 VK_RSHIFT  . . . . . . . . . . .	Number	 000000A1h   
 VK_SCROLL  . . . . . . . . . . .	Number	 00000091h   
-VK_SEPARATER . . . . . . . . . .	Number	 0000006Ch   
-VK_SHIFT . . . . . . . . . . . .	Number	 00000010h   
-VK_SNAPSHOT  . . . . . . . . . .	Number	 0000002Ch   
-VK_SPACE . . . . . . . . . . . .	Number	 00000020h   
-VK_SUBTRACT  . . . . . . . . . .	Number	 0000006Dh   
-VK_TAB . . . . . . . . . . . . .	Number	 00000009h   
-VK_UP  . . . . . . . . . . . . .	Number	 00000026h   
 WINDOW_BUFFER_SIZE_EVENT . . . .	Number	 00000004h   
+WM_CLOSE . . . . . . . . . . . .	Number	 00000010h   
+WM_CREATE  . . . . . . . . . . .	Number	 00000001h   
+WM_LBUTTONDOWN . . . . . . . . .	Number	 00000201h   
+WS_BORDER  . . . . . . . . . . .	Number	 00800000h   
+WS_CAPTION . . . . . . . . . . .	Number	 00C00000h   
+WS_DLGFRAME  . . . . . . . . . .	Number	 00400000h   
+WS_MAXIMIZEBOX . . . . . . . . .	Number	 00010000h   
+WS_MINIMIZEBOX . . . . . . . . .	Number	 00020000h   
+WS_OVERLAPPED  . . . . . . . . .	Number	 00000000h   
+WS_SYSMENU . . . . . . . . . . .	Number	 00080000h   
+WS_THICKFRAME  . . . . . . . . .	Number	 00040000h   
+WS_VISIBLE . . . . . . . . . . .	Number	 10000000h   
+WindowName . . . . . . . . . . .	Byte	 00000114 _DATA	
 WriteConsoleOutputCharacter  . .	Text   	 WriteConsoleOutputCharacterA
 WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
-attributes . . . . . . . . . . .	Word	 0000002A _DATA	
-black  . . . . . . . . . . . . .	Number	 00000000h   
-blue . . . . . . . . . . . . . .	Number	 00000001h   
-brown  . . . . . . . . . . . . .	Number	 00000006h   
-buffer . . . . . . . . . . . . .	Byte	 0000000C _DATA	
-cellsWritten . . . . . . . . . .	DWord	 00000004 _DATA	
-cyan . . . . . . . . . . . . . .	Number	 00000003h   
+className  . . . . . . . . . . .	Byte	 00000123 _DATA	
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
-gray . . . . . . . . . . . . . .	Number	 00000008h   
-green  . . . . . . . . . . . . .	Number	 00000002h   
-lightBlue  . . . . . . . . . . .	Number	 00000009h   
-lightCyan  . . . . . . . . . . .	Number	 0000000Bh   
-lightGray  . . . . . . . . . . .	Number	 00000007h   
-lightGreen . . . . . . . . . . .	Number	 0000000Ah   
-lightMagenta . . . . . . . . . .	Number	 0000000Dh   
-lightRed . . . . . . . . . . . .	Number	 0000000Ch   
-magenta  . . . . . . . . . . . .	Number	 00000005h   
-outHandle  . . . . . . . . . . .	DWord	 00000000 _DATA	
-red  . . . . . . . . . . . . . .	Number	 00000004h   
-white  . . . . . . . . . . . . .	Number	 0000000Fh   
+hInstance  . . . . . . . . . . .	DWord	 00000182 _DATA	
+hMainWnd . . . . . . . . . . . .	DWord	 0000017E _DATA	
+messageID  . . . . . . . . . . .	DWord	 0000018A _DATA	
+msg  . . . . . . . . . . . . . .	MSGStruct  00000152 _DATA	
+pErrorMsg  . . . . . . . . . . .	DWord	 00000186 _DATA	
+winRect  . . . . . . . . . . . .	RECT	 0000016E _DATA	
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
-xyPos  . . . . . . . . . . . . .	COORD	 00000008 _DATA	
-yellow . . . . . . . . . . . . .	Number	 0000000Eh   
 
-	   0 Warnings
+	   1 Warnings
 	   0 Errors

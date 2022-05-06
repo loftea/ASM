@@ -311,7 +311,7 @@ L1:	add ax,cx
 
 ## Part 3 写一个 Windows 命令行窗口程序
 
-### Handle
+### Window Handle
 
 一个 handle 是一个 uint32 变量，以下的常数是预定义的 handle 请求：
 
@@ -380,7 +380,7 @@ INCLUDE Irvine32.inc
          cellsWritten DWORD ?
          xyPos        COORD <30,3>
     ; Array of character codes:
-         buffer       BYTE "Have a iridescent day!"
+         buffer       BYTE "Have an iridescent day!"
          BufSize      DWORD ($-buffer)
     ; Array of attributes:
          attributes   WORD 0Fh,0Eh,0Dh,0Ch,0Bh,0Ah,9,8,7,6
@@ -404,3 +404,128 @@ main ENDP
 END main
 ```
 
+### File Manipulation
+
+`CreateFile` 操作可以创建文件，其 prototype 如下：
+
+```assembly
+CreateFile PROTO,
+	pFilename:PTR BYTE,	; ptr to filename
+	desiredAccess:DWORD,; access mode
+	shareMode:DWORD,	; share mode
+	lpSecurity:DWORD,	; ptr to security attribs
+	creationDisposition:DWORD,	; file creation options
+	flagsAndAttributes:DWORD,	; file attributes
+	htemplate:DWORD		; handle to template file
+```
+
+`ReadFile` 操作可以从输入文件当中读取文件，类似地也有 `WriteFile` 操作。
+
+### 写一个图形化 Windows 应用
+
+#### 准备
+
+首先需要一些必须的结构体，如下：
+
+```assembly
+point struct
+	ptx dword ?
+	pty dword ?
+point ends
+
+rect struct
+	left dword ?
+	top dword ?
+	right dword ?
+	bottom dword ?
+rect ends
+
+msgStruct struct
+	msgWnd dword ?
+	msgMessage dword ?
+	msgWparam dword ?
+	msgLparam dword ?
+	msgTime dword ?
+	msgPt point <>
+msgStruct ends
+
+wndCLass struct
+	style dword ?
+	lpfnWndProc dword ?
+	cbClsExtra dword ?
+	cbWndExtra dword ?
+	hInstance dword ? ; 3 handle to program icon cursor
+	hIcon dword ?
+	hCursor dword ?
+	hbrBackground dword ?
+	lpszMenuName dword ? ;pointer to menuname
+	lpszClassName dword ? ;pointer to winclass name
+wndClass ends
+```
+
+`MessageBox` 函数能够显示一个简单的信息框，其 PROTO 如下：
+
+```assembly
+MessageBox PROTO,
+	hWnd:dword,
+	lpText:ptr byte,
+	lpCaption:ptr byte,
+	uType:dword
+```
+
+#### WinMain Proc
+
+每个窗口化应用都需要一个启动的 Proc，一般来说它叫做 WinMain，它的功能一般有：
+
+- 获得一个 handle
+- 加载程序的图标和鼠标游标
+- 注册主要窗口 class 和识别文本进程
+- 创建主要窗口
+- 展示和更新主要窗口
+- 开启循环接收用户输入信息（GetMessage 循环）
+
+#### WinProc Proc
+
+该 Proc 完成接收事件信息并且完成的功能，其声明为：
+
+```assembly
+WinProc proc,
+	hWnd: dword, ;handle
+	localMsg:dword, ;msg id
+	wParam:dword,
+	lParam:dword
+```
+
+接受如下信息：
+
+- WM_LBUTTONDOWN 鼠标左键
+- WM_CREATE 主要窗口刚创建
+- WM_CLOSE 主要窗口即将关闭
+
+```assembly
+.if eax == WM_LBUUTONDOWN
+	invoke MessageBox, hWnd, addr PopupText,
+		addr PopupTitle, MB_OK
+	jmp WinProcExit
+```
+
+#### ErrorHandler Proc
+
+代码片段使用如下：
+
+```assembly
+invoke RegisterClass, addr MainWin
+.if eax == 0
+	call ErrorHandler
+	jmp Exit_Program
+.endif
+```
+
+其接受如下的工作：
+
+- Call GetLastError
+- Call FormatMessage
+- Call MessageBox
+- Call LocalFree
+
+## 准备da'zuo'ye

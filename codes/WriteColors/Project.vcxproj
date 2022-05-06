@@ -54,7 +54,7 @@
       <UseSafeExceptionHandlers>false</UseSafeExceptionHandlers>
     </MASM>
     <Link>
-      <AdditionalDependencies>Irvine32.lib;User32.lib;Kernel32.Lib</AdditionalDependencies>
+      <AdditionalDependencies>Irvine32.lib;User32.lib;Kernel32.Lib;</AdditionalDependencies>
       <AdditionalLibraryDirectories>c:\Irvine</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
@@ -62,7 +62,7 @@
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
-      <EntryPointSymbol>main</EntryPointSymbol>
+      <EntryPointSymbol>WinMain</EntryPointSymbol>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -72,9 +72,9 @@
       </DataExecutionPrevention>
       <SubSystem>Console</SubSystem>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
-      <AdditionalDependencies>Irvine32.lib;User32.lib;Kernel32.Lib</AdditionalDependencies>
+      <AdditionalDependencies>Irvine32.lib;User32.lib;Kernel32.Lib;</AdditionalDependencies>
       <AdditionalLibraryDirectories>c:\Irvine</AdditionalLibraryDirectories>
-      <EntryPointSymbol>main</EntryPointSymbol>
+      <EntryPointSymbol>WinMain</EntryPointSymbol>
     </Link>
     <MASM>
       <TreatWarningsAsErrors>false</TreatWarningsAsErrors>

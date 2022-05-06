@@ -1,3 +1,4 @@
 ﻿  Assembling WriteColor.asm...
-WriteColor.obj : warning LNK4258: 指令“/ENTRY:main@0”与开关“/ENTRY:main”不兼容；已忽略
+c:\Irvine\SmallWin.inc(11): warning A4011: multiple .MODEL directives found : .MODEL ignored
+WriteColor.obj : warning LNK4258: 指令“/ENTRY:WinMain@0”与开关“/ENTRY:WinMain”不兼容；已忽略
   Project.vcxproj -> C:\Users\Eussi_kun\Documents\GitHub\ASM\codes\WriteColors\Debug\Project.exe
