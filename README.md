@@ -528,4 +528,5 @@ invoke RegisterClass, addr MainWin
 - Call MessageBox
 - Call LocalFree
 
-## 准备da'zuo'ye
+## 准备大作业！
+

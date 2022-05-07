@@ -1,30 +1,19 @@
-TITLE Writing Text Colors (WriteColors.asm)
-INCLUDE Irvine32.inc
-..data
-         outHandle    HANDLE ?
-         cellsWritten DWORD ?
-         xyPos        COORD <10,2>
-    ; Array of character codes:
-         buffer       BYTE 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
-         BYTE         16,17,18,19,20
-         BufSize      DWORD ($-buffer)
-    ; Array of attributes:
-         attributes   WORD 0Fh,0Eh,0Dh,0Ch,0Bh,0Ah,9,8,7,6
-         WORD         5,4,3,2,1,0F0h,0E0h,0D0h,0C0h,0B0h
-..code
-main PROC
-    ; Get the Console standard output handle:
-         INVOKE GetStdHandle,STD_OUTPUT_HANDLE
-         mov    outHandle,eax
-    ; Set the colors of adjacent cells:
-         INVOKE WriteConsoleOutputAttribute,
-outHandle, ADDR attributes,
-BufSize, xyPos, ADDR cellsWritten
-    ; Write character codes 1 through 20:
-         INVOKE WriteConsoleOutputCharacter,
-outHandle, ADDR buffer, BufSize,
-xyPos, ADDR cellsWritten
-         INVOKE ExitProcess,0
-    ; end program
-main ENDP
-END main
+.386
+.model flat,stdcall
+.data?
+char BYTE ?
+.code
+main proc
+L1: mov ah,06h
+; keyboard input
+mov dl,0FFh
+; don't wait for input
+int 21h
+jz L1
+; no character? repeat loop
+mov char,al
+; character pressed: save it
+call DumpRegs
+; display registers
+main endp
+end main
